@@ -1,0 +1,82 @@
+MAIN GOALS: 
+  - make all the flying birds go over the top of the screen.
+  - prevent birds to fall to the bottom of the screen (the bird is lost).
+LOOSE CONDITION: all the birds are lost.
+
+CHALLENGES:
+  - Obstacles must be broken by hitting on them multiple times (the bird revert its direction)
+  - Bats must be defeated by hitting on them multiple times (like obstacles, but they move around)
+
+BIRDS:
+  - win-G: just a regular bird
+      - B action chip! (makes nearby birds go up if going up too)
+  - speed-E: moves faster and hits harder
+      - B action sprint! (sprints in the directin it's moving for a short time hitting even harder)
+  - big-O: occupies 2 lanes, slow at going up, falls fast, hits normally
+      - B action fart! (temporally slows fall)
+  - lead-R: moves like speedo and hits even harder
+      - B action attack! (like chip, but has whider range)
+  - steal-T: like win-G but more boncy
+      - B action stealth! (toggle stealth mode, can pass through obstacles and bats)
+
+BATS:
+  - mean-O: just a regular bat
+      - movement: moves 1 lane sideways, rarelly gets nearer
+  - shino-B: can disappear and appear anywhere on the screen
+  - bull-E: double size and hitpoints as regular bats
+      - movement: moves 1 lane sideways, slowly gets nearer
+  - roar-D: will scream and cause nearby birds to route
+      - movement: moves 1 line sideways, rarelly gets nearer
+  - moth-R: occupies 3 lanes, can spown other bats in nearby lanes
+      - movement: will keep stationary in the top-center of the screen
+
+OBSTACLES:
+  - leaves: takes 1 regular hit to be broken
+  - plank: takes 2 regular hits to be broken
+  - bricks: takes 3 regular hits to be broken
+  - cloud: slows the birds
+  - steel: can't be broken
+
+POWERUPS:
+  - boost!: boost a bird going up
+  - vacuum!: sucks a bird back
+  - freeze!: slows time in a lane
+  - ball!: shoots a ball in a lane acting like a regular bird, but can't be made to go up again when falling
+  - switch!: switches the birds in tow lanes
+
+CHAPTERS: each chapter there's 2 additional lanes
+
+CHAPTER 1: 1 LANE - TUTORIAL - simply go over the top
+  - LVL 1: launch your bird, go over the top and win
+  - LVL 2: leaves in the way, must blow back the bird and win
+  - LVL 3: boost! powerup behind plank, must get there in time!
+  - LVL 4: bat! use the boost! to defeat it
+  - LVL 5: 1 lane mix
+
+CHAPTER 2: 3 LANES - FRIENDS & ENEMIES - go over the top, unbeaten bats will remain in the last level, starting birds are always the same
+  - LVL 1: switch! 1 bird, 3 lanes, use switch to move around
+  - LVL 2: chip! 3 birds, use chip! to help finish the level
+  - LVL 3: bull-E! defeat a bull-E!
+  - LVL 4: 3 lanes mix
+  - LVL 5: defeat all remaning bats (steel barrier)
+
+CHAPTER 3: 5 LANES - JOURNEY - this chapter is made of shorter levels, but chained, lost birds will remain lost
+  - LVL 1: speed-E! easily break leaves and slain bats with its boost
+  - LVL 2: freeze! stop time in lane to handle it later
+  - LVL 3: 5 lanes mix
+  - LVL 4: roar-D! watch out this guy will make your birds route!
+  - LVL 5: defeat all remaning bats with the remaning birds!
+
+CHAPTER 4: 7 LANES - INCURSION - things get harder, starting birds change from level to level
+  - LVL 1: bricks and big-O! use big-O to hit multiple bats at once
+  - LVL 2: 7 lanes mix
+  - LVL 3: shino-B! watch out for these rascals!
+  - LVL 4: vacuum! use vacuum to help you
+  - LVL 5: defeat remaning bats!
+
+CHAPTER 5: 9 LANES - THE NEST - hardest mode, select an position your starting birds
+  - LVL 1: steal-T available to start with!
+  - LVL 2: ball! use the ball to hit in lanes where you lost the bird!
+  - LVL 3: 9 lanes mix!
+  - LVL 4: lead-R arrives!
+  - LVL 5: the mother!!

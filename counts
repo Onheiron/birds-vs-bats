@@ -1,0 +1,36 @@
+SPRITES: 5KB
+  BIRDS sprites: 1KB
+    - single: 16 * 16 * 2bits = 64bytes * 2 = 128bytes
+
+  BATS sprites: 1KB
+
+  MISC sprites: 1KB (520byte obstacles and powerups)
+    - obstacles: 32bytes * 5 = 160bytes
+    - powerups: 36bytes * 5 * 2 = 360bytes
+
+  MISC artworks: 2KB
+
+MUSIC: 5KB
+
+LEVELS LAYOUT MAX: 1KB - MIN: 0.6KB
+
+8 * 16
+
+0
+1:5 - bats
+6:10 - obstacles
+11:15 - powerups
+
+CODE: 21KB
+
+NEEDED FUNCTIONS:
+  - SCALE SPRITE
+  - SPRITE ANIMATION
+  - PHYSICS
+  - COLLISIONS
+  - VALUES:
+    - birds: 10B
+    - bats: 10B
+  - STATUSES:
+    - bird:
+      -
