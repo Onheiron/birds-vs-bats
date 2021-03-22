@@ -18,7 +18,6 @@ struct BirdInstance
 {
   struct BirdModel *model;
   fixed posX, posY;
-  fixed bSpd, cSpd;
   unsigned char status;
 };
 
