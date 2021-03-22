@@ -1,5 +1,3 @@
-#include <gb/gb.h>
-
 const unsigned char win_g_sprite[] = {
   // FRAME 1
   // Top Left
