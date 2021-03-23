@@ -1,11 +1,12 @@
 #include <gb/gb.h>
-// #include"dex/birds/factory.h"
-#include "dex/birds/functions.h"
-#include "sprites/birds.h"
 #include "definitions.h"
+#include "dex/index.h"
+#include "sprites/index.h"
+#include "logic/birds/movement.h"
 
 static UBYTE time = 0; /* Global "time" value (counter) */
-const int maxLanes = 6;
+int currentLanes = 5;
+int selLane = 3;
 UBYTE sframe = 0;      /* Current frame of the sprite */
 fixed wposx, wposy;    /* Window position (fixed point) */
 fixed sposx, sposy[6]; /* Sprite position (fixed point) */
@@ -14,11 +15,42 @@ fixed sspy[6];         /* Sprite speed (fixed point) */
 fixed csspy[6];        /* Sprite speed (fixed point) */
 fixed direction[6];
 fixed sspybst[6];
-fixed sellane;
 fixed arrowup;
+unsigned char speedUnit = 0x00FF;
 
-void tile_sprite(int left);
-void place_sprite(int left);
+void setupLevel(int level)
+{
+  for (int l = 0; l < level; l++)
+  {
+    struct BirdInstance *currentBird = &allBirds[l];
+    currentBird->posX = 0x10 + (l * 0x10);
+    currentBird->posY = 0x88;
+    currentBird->status = 0x80;
+  }
+}
+
+/* Set sprite tiles */
+void tile_sprite(int left)
+{
+  int from = 0;
+  for (int n = 0; n < currentLanes; n++)
+  {
+    struct BirdInstance *currBird = &allBirds[n];
+    from = (n * 2) + left;
+    set_sprite_tile(from, win_g_tiles[sframe]);
+    set_sprite_prop(from, S_FLIPX * left);
+    if (currentDirection(currBird) == 0)
+    {
+      set_sprite_prop(from, S_FLIPY | (S_FLIPX * left));
+    }
+    else if (currentDirection(currBird) == 1)
+    {
+      set_sprite_prop(from, S_FLIPX * left);
+    }
+  }
+
+  set_sprite_tile(12, arrow_tiles[0]);
+}
 
 /* Animate sprite */
 void animate_sprite()
@@ -33,56 +65,25 @@ void animate_sprite()
   }
 }
 
-/* Set sprite tiles */
-void tile_sprite(int left)
-{
-  int from = 0;
-  for (int n = 0; n < maxLanes; n++)
-  {
-    from = (n * 2) + left;
-    set_sprite_tile(from, win_g_tiles[sframe]);
-    set_sprite_prop(from, S_FLIPX * left);
-    if (direction[n].w == -1)
-    {
-      set_sprite_prop(from, S_FLIPY | (S_FLIPX * left));
-    }
-    else if (direction[n].w == 1)
-    {
-      set_sprite_prop(from, S_FLIPX * left);
-    }
-  }
-
-  set_sprite_tile(12, arrow_tiles[0]);
-}
-
 /* Place sprite */
 void place_sprite(int left)
 {
   int from = 0;
-  for (int n = 0; n < maxLanes; n++)
+  for (int n = 0; n < currentLanes; n++)
   {
+    struct BirdInstance *currBird = &allBirds[n];
     from = (n * 2) + left;
-    move_sprite(from, sposx.b.h + (from * 0x08), sposy[n].b.h);
+    move_sprite(from, currBird->posX + (left * 0x08), currBird->posY);
   }
 
-  move_sprite(12, aposx.b.h + (sellane.w * 0x10), aposy.b.h);
+  move_sprite(12, aposx.b.h + (selLane * 0x10), aposy.b.h);
 }
 
-void move_lane()
+void moveLanes()
 {
-  for (int n = 0; n < maxLanes; n++)
+  for (int n = 0; n < currentLanes; n++)
   {
-    if (sspybst[n].w > 1)
-    {
-      sspybst[n].w /= 2;
-    }
-    if (sposy[n].w <= 0x1000)
-    {
-      direction[n].w = -1;
-      sspybst[n].w = 0;
-    }
-    csspy[n].w = (sspy[n].w * direction[n].w) + sspybst[n].w;
-    sposy[n].w -= csspy[n].w;
+    movementSequence(&allBirds[n], speedUnit);
   }
 }
 
@@ -102,7 +103,8 @@ void main()
   /* Initialize the sprites */
   set_sprite_data(0x00, 0x04, win_g_data);
   set_sprite_data(0x04, 0x08, arrow_data);
-  for (int n = 0; n < maxLanes; n++)
+  setupLevel(currentLanes);
+  for (int n = 0; n < currentLanes; n++)
   {
     sposy[n].w = 0x8800;
     sspy[n].w = 0x0200;
@@ -111,7 +113,6 @@ void main()
   }
   aposx.w = 0x0400;
   aposy.w = 0x9800;
-  sellane.w = 0x03;
   arrowup.w = 0x01;
   tile_sprite(0);
   tile_sprite(1);
@@ -127,37 +128,33 @@ void main()
     for (int i = 0; i < 4; i++)
       wait_vbl_done();
     time++;
-    move_lane();
+    moveLanes();
     place_sprite(0);
     place_sprite(1);
     animate_sprite();
     i = joypad();
     if (i & J_A)
     {
-      sspybst[sellane.w - 1].w = sposy[sellane.w - 1].w / 0x40;
-      if ((sspy[sellane.w - 1].w * direction[sellane.w - 1].w) > 0)
-      {
-        direction[sellane.w - 1].w = 1;
-      }
+      applyBoost(&allBirds[selLane - 1], -(allBirds[selLane - 1].posY >> 4));
     }
     if (arrowup.w > 0)
     {
       if (i & J_RIGHT)
       {
         arrowup.w = 0x00;
-        sellane.w++;
-        if (sellane.w > maxLanes)
+        selLane++;
+        if (selLane > currentLanes)
         {
-          sellane.w = 1;
+          selLane = 1;
         }
       }
       else if (i & J_LEFT)
       {
         arrowup.w = 0x00;
-        sellane.w--;
-        if (sellane.w < 1)
+        selLane--;
+        if (selLane < 1)
         {
-          sellane.w = maxLanes;
+          selLane = currentLanes;
         }
       }
     }

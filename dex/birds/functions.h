@@ -1,4 +1,4 @@
-#include "factory.h"
+#include "types.h"
 
 // STATS PARSERS
 
@@ -48,65 +48,107 @@ unsigned char currentState(struct BirdInstance *bird)
   return ((bird->status & 0x30) >> 4);
 }
 
-/**
- *  boost_value =   0 0 0 0 | 0 B B B
- *  boost_mask =    0 0 0 0 | 0 1 1 1 = 0x07
- *  shift >> 0
- * 
- *  boost_dir =     0 0 0 0 | D 0 0 0
- *  boost_mask =    0 0 0 0 | 1 0 0 0 = 0x08
- *  shift >> 3
- * 
- *  direction =     D 0 0 0 | 0 0 0 0
- *  dir_mask =      1 0 0 0 | 0 0 0 0 = 0x80
- *  shift >> 7
- * 
- *  boost_dir: 0 -> same as direction, 1 -> opposite to direction
- *  final_direction = boost_dir XOR direction
- *    dir   b_dir   f_dir
- *     0      0       0
- *     1      0       1
- *     0      1       1
- *     1      1       0
- * 
- *  boost_sign = final_direction * 255
- *  unsigned boost -> signed boost = (signed char) boost ^ boost_sign
- * */
-char currentSpeedBoost(struct BirdInstance *bird)
+signed char toSigned(char unsgnd)
 {
-  return ((signed char)bird->status & 0x07) ^
-         (((signed char)((bird->status & 0x80) >> 7) ^
-           ((bird->status & 0x08) >> 3)) *
-          255);
+  return (((signed char)unsgnd) * 254) + 1;
 }
 
-/**
- * base_speed = baseSpeed(bird)
- * speed_sign = direction * 255
- * unsigned speed -> signed_speed = (signed char) speed ^ speed_sign
- * */
-fixed* currentBaseSpeed(struct BirdInstance *bird, fixed *speedUnit)
+signed char currentSpeedBoost(struct BirdInstance *bird)
 {
-  fixed out = {
-    .w = speedUnit->w * (baseSpeed(bird) ^ (((signed char)(bird->status & 0x80) >> 7) * 255))
-  };
-  return &out;
+  return ((signed char)bird->status & 0x07) * toSigned(((bird->status & 0x80) >> 7) ^
+                                                       ((bird->status & 0x08) >> 3));
+}
+
+signed char currentBaseSpeed(struct BirdInstance *bird)
+{
+  return (signed char)baseSpeed(bird) * toSigned((bird->status & 0x80) >> 7);
 }
 
 /**
  * boost_perc = currentSpeedBoost(bird) / 6 <- percentage over the maximum half/value of 6
- * base_speed = currentBaseSpeed(bird, speedUnit)
+ * base_speed = currentBaseSpeed(bird)
  * boost_value = boost_perc * base_speed <- -0.5 * -5 = 2.5 ... boost is correctly opposite to spd direction
  * current_speed = base_speed + boost_value
  * */
-fixed* currentSpeed(struct BirdInstance *bird, fixed *speedUnit)
+signed char currentSpeed(struct BirdInstance *bird)
 {
-  fixed boost_perc = {
-    .w = currentSpeedBoost(bird) / 0x06
-  };
-  fixed *base_speed = currentBaseSpeed(bird, speedUnit);
-  fixed current_speed = {
-    .w = base_speed->w + (boost_perc.w * base_speed->w)
-  };
-  return &current_speed;
+  signed char base_speed = currentBaseSpeed(bird);
+  signed char current_speed = base_speed + currentSpeedBoost(bird);
+  return current_speed;
+}
+
+void boostSpeed(struct BirdInstance *bird, char boost)
+{
+  bird->status = (bird->status & 0xF0) | (boost & 0x07);
+}
+
+void nerfSpeed(struct BirdInstance *bird, char boost)
+{
+  bird->status = (bird->status & 0xF0) | (0x08 | (boost & 0x07));
+}
+
+/**
+ * status =         1 0 1 1 0 1 1 1
+ * direction_bnc =  1 0 0 0 0 0 0 0
+ * new_status =     0 0 1 0 0 1 1 1 (status ^ direction_bnc)
+ * */
+void bounceBack(struct BirdInstance *bird)
+{
+  bird->status = bird->status ^ 0x80;
+}
+
+char currentDirection(struct BirdInstance *bird)
+{
+  return (bird->status & 0x80) >> 7;
+}
+
+/**
+ * Apply a signed boost, so positive goes "up" while negative goes "down".
+ * If the boost inverts the speed, then toggle direction and change the boost to the difference.
+ * If current boost is not 0, then add the two.
+ * */
+void applyBoost(struct BirdInstance *bird, signed char boost)
+{
+  signed char cBoost = currentSpeedBoost(bird);
+  signed char cSpeed = currentBaseSpeed(bird);
+  if ((cBoost ^ boost) >= 0)
+  {
+    boost = boost >= cBoost ? boost : cBoost;
+  }
+  else
+  {
+    boost += cBoost;
+  }
+  if (((cSpeed + boost) ^ cSpeed) < 0)
+  {
+    bounceBack(bird);
+    boostSpeed(bird, boost + cSpeed);
+  }
+  else
+  {
+    if ((boost ^ cSpeed) >= 0)
+    {
+      boostSpeed(bird, boost);
+    }
+    else
+    {
+      nerfSpeed(bird, boost);
+    }
+  }
+}
+
+/**
+ * degrades current speed boost by shifting the last 3 bits of the status.
+ * 
+ * status =         1 0 1 1 0 1 1 1
+ * boost =          0 0 0 0 0 1 1 1
+ * deg_boost =      0 0 0 0 0 0 1 1
+ * boost_delta =    0 0 0 0 0 1 0 0   (boost ^ deg_boost)
+ * new_status =     1 0 1 1 0 0 1 1   (status ^ boost_delta)
+ * */
+void degradeBoost(struct BirdInstance *bird)
+{
+  if ((bird->status & 0x07) == 0x00)
+    return;
+  bird->status = (bird->status & 0xF8) | ((bird->status & 0x07) >> 1);
 }
