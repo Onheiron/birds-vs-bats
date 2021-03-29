@@ -17,7 +17,7 @@ unsigned char baseSpeed(struct BirdInstance *bird)
  *  mask =          0 0 1 1 | 0 0 0 0 = 0x30
  *  shift >> 4
  * */
-unsigned char baseStrenght(struct BirdInstance *bird)
+unsigned char baseStrength(struct BirdInstance *bird)
 {
   return ((bird->model->stats & 0x30) >> 4);
 }

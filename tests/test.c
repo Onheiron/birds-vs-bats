@@ -8,7 +8,7 @@ void printBaseStats(struct BirdInstance *bird)
 {
   printf("\n  >>> BESE STATS:\n");
   printf("    Base speed: %d\n", baseSpeed(bird));
-  printf("    Base strenght: %d\n", baseStrenght(bird));
+  printf("    Base strength: %d\n", baseStrength(bird));
   printf("    Base weight: %d\n", baseWeight(bird));
   printf("    Base attrition: %d\n", baseAttrition(bird));
 }

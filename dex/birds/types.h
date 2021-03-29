@@ -29,27 +29,27 @@ struct BirdModel
 
 struct BirdModel winG = {
     .type = Wing_G,
-    .stats = 0xAA, //   1 0 | 1 0 | 1 0 | 1 0 | ->  1 | 1 | 1 | 1 |
+    .stats = 0x55, //   0 1 | 0 1 | 0 1 | 0 1 | ->  1 | 1 | 1 | 1 |
     .power = Chip};
 
 struct BirdModel speedE = {
     .type = Speed_E,
-    .stats = 0xFA, //   1 1 | 1 1 | 1 0 | 1 0 | ->  2 | 2 | 1 | 1 |
+    .stats = 0xA5, //   1 0 | 1 0 | 0 1 | 0 1 | ->  2 | 2 | 1 | 1 |
     .power = Sprint};
 
 struct BirdModel bigO = {
     .type = Big_O,
-    .stats = 0x7F, //   0 1 | 1 1 | 1 1 | 1 1 | ->  0 | 3 | 2 | 1 |
+    .stats = 0x6D, //   0 1 | 1 0 | 1 1 | 0 1 | ->  1 | 2 | 3 | 1 |
     .power = Fart};
 
 struct BirdModel stealT = {
     .type = Steal_T,
-    .stats = 0xE5, //   1 1 | 1 0 | 0 1 | 0 1 | ->  2 | 2 | 0 | 2 |
+    .stats = 0xD6, //   1 1 | 0 1 | 0 1 | 1 0 | ->  3 | 1 | 1 | 2 |
     .power = Stealth};
 
 struct BirdModel leadR = {
     .type = Lead_R,
-    .stats = 0xBB, //   1 0 | 1 1 | 1 0 | 1 1 | ->  2 | 2 | 1 | 3 |
+    .stats = 0x76, //   0 1 | 1 1 | 0 1 | 1 0 | ->  1 | 3 | 1 | 2 |
     .power = Lead};
 
 struct BirdModel* birdDex[] = {
@@ -75,6 +75,7 @@ struct BirdModel* birdDex[] = {
 struct BirdInstance
 {
   struct BirdModel *model;
+  struct Lane *lane;
   unsigned char posX;
   unsigned char posY;
   unsigned char status;

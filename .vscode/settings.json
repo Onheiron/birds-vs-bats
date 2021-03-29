@@ -12,6 +12,9 @@
     "cmocka.h": "c",
     "dumbexample.h": "c",
     "unity.h": "c",
-    "stdio.h": "c"
+    "stdio.h": "c",
+    "stack": "c",
+    "algorithm": "c",
+    "cstdlib": "c"
   }
 }

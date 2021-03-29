@@ -1,15 +1,36 @@
-#include"birds/index.h"
+/**
+ *              0   0   0   0   |   0   0   |   0   0
+ * layout       lanes number        chpt-n      style
+ *  style:
+ *    0 -> same starting birds for all levels
+ *    1 -> starting birds are those left from previous levels
+ *    2 -> each level has its birds layout
+ *    3 -> player can pick the starting birds for each level
+ * */
+struct Chapter {
+  struct Chapter *pre;
+  struct Chapter *next;
+  unsigned char layout;
+  struct Level *levels[];
+};
+
+struct Position {
+  unsigned char lane;
+  unsigned char posY;
+};
 
 /**
- *              0   0   |   0   0   |   0   0   |   0   0
- * layout       chpt-n      lvl-n      bts-knd     pwps
- * chpt-n: index of the chapter
- * lvl-n: level index within the chapter
- * bts-knd: what kind of bats can spawn in this level
- * pwps: what kind of power-ups can spawn in this level
+ *              0   0   |  0   0   0   |   0   0   0
+ * layout       bds-nr     obst-nr         bats-nr
+ * 
+ * bbirds -> position Y   |   stats   |   status   | xtras
  * */
 struct Level {
+  struct Chapter *chapter;
   struct Level *pre;
-  unsigned char layout;
-  struct BirdInstance *birds[];
+  struct Level *next;
+  unsigned char layout[3];
+  struct BirdInstance **birds;
+  unsigned int bbirds[9];
+  char obstacles[128][3];
 };

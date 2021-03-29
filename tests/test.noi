@@ -75,7 +75,7 @@ DEF s__HEAP 0xC142
 DEF .STACK 0xE000
 DEF .refresh_OAM 0xFF80
 DEF _baseSpeed 0x200
-DEF _baseStrenght 0x22A
+DEF _baseStrength 0x22A
 DEF _baseWeight 0x24C
 DEF _baseAttrition 0x266
 DEF _currentState 0x276
