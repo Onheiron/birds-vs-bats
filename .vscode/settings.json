@@ -15,6 +15,7 @@
     "stdio.h": "c",
     "stack": "c",
     "algorithm": "c",
-    "cstdlib": "c"
+    "cstdlib": "c",
+    "base_bg.h": "c"
   }
 }

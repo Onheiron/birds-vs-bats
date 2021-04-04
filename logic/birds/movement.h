@@ -12,15 +12,16 @@ void movementSequence(struct BirdInstance *bird, unsigned char speedUnit, unsign
       continue;
     oY = obstacles[o][0] + levelProgress;
     oX = obstacles[o][1] >> 4;
-    if ((birdLane == oX) && (bird->posY <= (oY + 0x08)))
+    if ((birdLane == oX) && (bird->posY <= (oY + 0x10)))
     {
       if(birdStrength <= olife) {
         bounceBack(bird);
-        bird->posY = (oY + 0x09);
+        bird->posY = (oY + 0x11);
         olife -= birdStrength;
       } else {
         olife = 0x00;
       }
+      boostSpeed(bird, 0x07);
       if (olife <= 0)
       {
         obstacles[o][0] = 0x00;

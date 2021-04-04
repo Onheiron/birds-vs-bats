@@ -31,6 +31,6 @@ struct Level {
   struct Level *next;
   unsigned char layout[3];
   struct BirdInstance **birds;
-  unsigned int bbirds[9];
+  unsigned char bbirds[9][4];
   char obstacles[128][3];
 };

@@ -2,6 +2,10 @@
 
 // STATS PARSERS
 
+unsigned char birdType(char statByte) {
+  return (statByte & 0xE0) >> 5;
+}
+
 /**
  *  speed_stat =    S S 0 0 | 0 0 0 0
  *  mask =          1 1 0 0 | 0 0 0 0 = 0xC0
@@ -12,6 +16,11 @@ unsigned char baseSpeed(struct BirdInstance *bird)
   return ((bird->model->stats & 0xC0) >> 6);
 }
 
+unsigned char baseSpeedB(char statByte)
+{
+  return ((statByte & 0x80) >> 7);
+}
+
 /**
  *  strng_stat =    0 0 S S | 0 0 0 0
  *  mask =          0 0 1 1 | 0 0 0 0 = 0x30
@@ -20,6 +29,11 @@ unsigned char baseSpeed(struct BirdInstance *bird)
 unsigned char baseStrength(struct BirdInstance *bird)
 {
   return ((bird->model->stats & 0x30) >> 4);
+}
+
+unsigned char baseStrengthB(char statByte)
+{
+  return ((statByte & 0x40) >> 6);
 }
 
 /**
@@ -42,10 +56,20 @@ unsigned char baseAttrition(struct BirdInstance *bird)
   return ((bird->model->stats & 0x03));
 }
 
+unsigned char baseAttritionB(char statByte)
+{
+  return (statByte & 0x20) >> 5;
+}
+
 // STATUS PARSERS
 unsigned char currentState(struct BirdInstance *bird)
 {
   return ((bird->status & 0x30) >> 4);
+}
+
+unsigned char currentStateB(char stateByte)
+{
+  return ((stateByte & 0x18) >> 3);
 }
 
 signed char toSigned(char unsgnd)
@@ -142,13 +166,17 @@ void applyBoost(struct BirdInstance *bird, signed char boost)
  * 
  * status =         1 0 1 1 0 1 1 1
  * boost =          0 0 0 0 0 1 1 1
- * deg_boost =      0 0 0 0 0 0 1 1
- * boost_delta =    0 0 0 0 0 1 0 0   (boost ^ deg_boost)
- * new_status =     1 0 1 1 0 0 1 1   (status ^ boost_delta)
+ * deg_boost =      0 0 0 0 0 1 0 1
+ * boost_delta =    0 0 0 0 0 0 1 0   (boost ^ deg_boost)
+ * new_status =     1 0 1 1 0 1 0 1   (status ^ boost_delta)
  * */
 void degradeBoost(struct BirdInstance *bird)
 {
   if ((bird->status & 0x07) == 0x00)
     return;
-  bird->status = (bird->status & 0xF8) | ((bird->status & 0x07) >> 1);
+  bird->status = bird->status ^ (((bird->status & 0x07)) ^ ((bird->status & 0x07) >> 1));//(bird->status & 0xF8) | ((bird->status & 0x07) >> 1);
+}
+
+char setBits(char byte, char newValue) {
+  return (byte ^ (byte ^ newValue));
 }
