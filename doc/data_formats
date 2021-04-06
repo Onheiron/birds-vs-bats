@@ -1,0 +1,49 @@
+
+BIRD: position Y | stats | boost | status -> 4 bytes
+
+                1     2     3     4     5     6     7     8
+  - stats:      
+    - base      |-----------| -> spd | str | att
+    - status                      |-----| -> 0 lost, 1 placed, 2 started, 3 passed
+
+                1     2     3     4     5     6     7     8
+  - boost:
+    - dir.      ! -> 0 up, 1 down
+    - bst. dir        ! -> 0 same as dir, 1 opposite to dir
+    - bst. val              |-----------|
+  
+                1     2     3     4     5     6     7     8
+  - status:
+    - size:     ! -> 0 small, 1 big
+    - sp. stat        |-----| -> 0 normal, 1 frozen, 2 stealth
+    - sp. cdwn                    |-----------|
+
+
+OBSTACLE: position Y | posX+frames | stats = 3 bytes
+
+                1     2     3     4     5     6     7     8
+  - posX + frames:
+    - posX      |-----------------|
+    - bounce frame                      |-----| -> current frame in bounce animation
+    - break frame                                   |-----| -> current frame in break animation
+
+                1     2     3     4     5     6     7     8
+  - stats:
+    - bounce    ! -> 0 bounces bird, 1 bird passes through
+    - spd. bst.       |-----------| -> speed boost applied
+    - current HP                        |-----|
+    - ???                                           |-----|
+
+
+BAT: position Y | posX+???  | stats
+
+                1     2     3     4     5     6     7     8
+  - posX+???:
+    - posX      |-----| -> 0 = 3...3 = 9
+    - size                  |-----|
+    - type                              |-----------|
+
+  - stats:
+    - HP        |-----------|
+    - bounce                      |-----------|
+    - level                                         |-----|  -> 0 easy...3 hardest

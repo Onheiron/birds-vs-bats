@@ -1,0 +1,21 @@
+{
+  "files.associations": {
+    "index.h": "c",
+    "sprites.h": "c",
+    "functions.h": "c",
+    "filesystem": "c",
+    "ios": "cpp",
+    "factory.h": "c",
+    "types.h": "c",
+    "movement.h": "c",
+    "definitions.h": "c",
+    "cmocka.h": "c",
+    "dumbexample.h": "c",
+    "unity.h": "c",
+    "stdio.h": "c",
+    "stack": "c",
+    "algorithm": "c",
+    "cstdlib": "c",
+    "base_bg.h": "c"
+  }
+}

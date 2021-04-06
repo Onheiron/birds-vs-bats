@@ -7,28 +7,48 @@ CHALLENGES:
   - Obstacles must be broken by hitting on them multiple times (the bird revert its direction)
   - Bats must be defeated by hitting on them multiple times (like obstacles, but they move around)
 
+BIRD STATS:
+  - speed: the base speed when boosts are over
+  - strength: how much damage it deals on hit
+  - weight: determines the response to boosts
+
 BIRDS:
-  - win-G: just a regular bird
+  - win-G [0 0 0]: just a regular bird
       - B action chip! (makes nearby birds go up if going up too)
-  - speed-E: moves faster and hits harder
+  - speed-E [1 1 0]: moves faster and hits harder
       - B action sprint! (sprints in the directin it's moving for a short time hitting even harder)
-  - big-O: occupies 2 lanes, slow at going up, falls fast, hits normally
+  - big-O [0 1 1]: occupies 2 lanes, slow at going up, falls fast, hits normally
       - B action fart! (temporally slows fall)
-  - lead-R: moves like speedo and hits even harder
+  - lead-R [1 1 1]: moves like speedo and hits even harder
       - B action attack! (like chip, but has whider range)
-  - steal-T: like win-G but more boncy
+  - steal-T [1 0 0]: like win-G but more boncy
       - B action stealth! (toggle stealth mode, can pass through obstacles and bats)
+  
+  - slow-P [0 0 1]: slow buddy
+      - B action woah! slows nearby birds
+  - match-D [0 1 0]: stronger than regular bird
+      - B action break! boosts strength on press
+  - puff-Y [1 0 1]: not very heavy, quite fast, but with big feathers
+
+BATS STATS:
+  - toughness: how many hits they take
+  - movement: how much they move around
+  - bounce: the back boost they apply when hit by birds
 
 BATS:
-  - mean-O: just a regular bat
+  - mean-O [0 0 0]: just a regular bat
       - movement: moves 1 lane sideways, rarelly gets nearer
-  - shino-B: can disappear and appear anywhere on the screen
-  - bull-E: double size and hitpoints as regular bats
+  - shino-B [0 1 1]: can disappear and appear anywhere on the screen
+  - bull-E [1 0 1]: double size and hitpoints as regular bats
       - movement: moves 1 lane sideways, slowly gets nearer
-  - roar-D: will scream and cause nearby birds to route
+  - roar-D [0 0 1]: will scream and cause nearby birds to route
       - movement: moves 1 line sideways, rarelly gets nearer
-  - moth-R: occupies 3 lanes, can spown other bats in nearby lanes
+  - moth-R [1 0 0]: occupies 3 lanes, can spown other bats in nearby lanes
       - movement: will keep stationary in the top-center of the screen
+
+  - fat-R [1 1 1]: bad guy overall
+  - trick-Y [0 1 0]: fast meany, teleports before hit
+  - drif-T [1 1 0]: though roamer, can appear over powerups and take them
 
 OBSTACLES:
   - leaves: takes 1 regular hit to be broken
