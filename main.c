@@ -1,4 +1,5 @@
 #include <gb/gb.h>
+#include <rand.h>
 #include "definitions.h"
 #include "dex/index.h"
 #include "sprites/index.h"
@@ -16,13 +17,23 @@ UBYTE levelProgress = 0x00;
 UBYTE xOffset = 0x30;
 UBYTE obstNr;
 UBYTE brdNr;
+unsigned char lasRndLane;
 UBYTE i, j, x, y, z, w; // variables
-unsigned char obstacles[14][3];
+unsigned char obstacles[9][3] = {
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00},
+    {0x00, 0x00, 0x00}};
 
 void setupLevel()
 {
-  obstNr = currentLevel->layout[1];
-  brdNr = currentLevel->layout[0];
+  obstNr = 9; // currentLevel->layout[1];
+  brdNr = 5;  //currentLevel->layout[0];
   for (i = 0; i < brdNr; i++)
   {
     struct BirdInstance *currentBird = currentLevel->birds[i];
@@ -32,18 +43,54 @@ void setupLevel()
   }
 }
 
-/* Set sprite tiles */
-void tile_sprite(int left)
+void shuffle(unsigned char *array, size_t n)
 {
-  set_sprite_tile(12, arrow_tiles[0]);
+  if (n > 1)
+  {
+    size_t i;
+    for (i = 0; i < n - 1; i++)
+    {
+      size_t j = i + rand() / (0xFF / (n - i) + 1);
+      int t = array[j];
+      array[j] = array[i];
+      array[i] = t;
+    }
+  }
+}
+
+void makeObstacle()
+{
+  unsigned char straightRow[5] = {0x00U, 0x01U, 0x02U, 0x03U, 0x04U};
+  shuffle(straightRow, 5);
+  UBYTE laneNeedle = 0x00;
+  for (i = 0; i < obstNr; i++)
+  {
+    if(laneNeedle >= 0x05) break;
+    if (((obstacles[i][2] & 0x0C) >> 2) == 0)
+    {
+      obstacles[i][0] = -(levelProgress + 0x08);
+      obstacles[i][1] = ((((unsigned char) straightRow[laneNeedle]) % 5) << 4);
+      obstacles[i][2] = 0xA8;
+      laneNeedle++;
+    }
+  }
+}
+
+void onTimeSprites()
+{
+  set_sprite_tile(10, arrow_tiles[0]);
 
   for (i = 0; i < obstNr; i++)
   {
-    j = i * 2;
-    set_sprite_tile(13 + j, leaves_tiles[0]);
-    set_sprite_tile(14 + j, leaves_tiles[1]);
+    j = (i * 2);
+    set_sprite_tile(11 + j, leaves_tiles[1]);
+    set_sprite_tile(12 + j, leaves_tiles[0]);
   }
+}
 
+/* Set sprite tiles */
+void tile_sprite(int left)
+{
   for (i = 0; i < brdNr; i++)
   {
     struct BirdInstance *currBird = currentLevel->birds[i];
@@ -74,31 +121,38 @@ void animate_sprite()
   }
 }
 
-/* Place sprite */
-void place_sprite(int left)
+void oneSidePlace()
 {
-  move_sprite(12, aposx + ((selLane - 1) * 0x10) + 0x04, aposy);
+}
+
+/* Place sprite */
+void place_sprite()
+{
+  move_sprite(10, aposx + ((selLane - 1) * 0x10) + 0x04, aposy);
   for (i = 0; i < obstNr; i++)
   {
-    j = (i * 2) + left;
-    w = (currentLevel->obstacles[i][2] & 0x0C) >> 2;
+    j = (i * 2);
+    w = (obstacles[i][2] & 0x0C) >> 2;
     if (w == 0)
     {
-      move_sprite(13 + j, 0x00, 0x00);
+      move_sprite(11 + j, 0x00, 0x00);
+      move_sprite(12 + j, 0x00, 0x00);
     }
     else
     {
-      y = currentLevel->obstacles[i][0] + levelProgress;
-      x = currentLevel->obstacles[i][1] >> 4;
-      move_sprite(13 + j, xOffset + (x * 0x10) + (left * 0x08), y);
+      y = obstacles[i][0] + levelProgress;
+      x = (obstacles[i][1] >> 4);
+      move_sprite(11 + j, xOffset + (x * 0x10) + 0x08, y);
+      move_sprite(12 + j, xOffset + (x * 0x10), y);
     }
   }
 
   for (i = 0; i < brdNr; i++)
   {
     struct BirdInstance *currBird = currentLevel->birds[i];
-    j = (i * 2) + left;
-    move_sprite(j, currBird->posX + (left * 0x07), currBird->posY);
+    j = (i * 2);
+    move_sprite(j, currBird->posX, currBird->posY);
+    move_sprite(j + 1, currBird->posX + 0x07, currBird->posY);
   }
 }
 
@@ -106,7 +160,11 @@ void moveLanes()
 {
   for (i = 0; i < brdNr; i++)
   {
-    movementSequence(currentLevel->birds[i], speedUnit, currentLevel->obstacles, obstNr, i, levelProgress);
+    movementSequence(currentLevel->birds[i], speedUnit, obstacles, obstNr, i, levelProgress);
+    if ((time & 0x01) == 0)
+    {
+      degradeBoost(currentLevel->birds[i]);
+    }
   }
 }
 
@@ -134,10 +192,10 @@ void main()
   setupLevel();
   aposx = xOffset;
   aposy = 0x98;
+  onTimeSprites();
   tile_sprite(0);
   tile_sprite(1);
-  place_sprite(0);
-  place_sprite(1);
+  place_sprite();
 
   DISPLAY_ON;
   enable_interrupts();
@@ -148,12 +206,16 @@ void main()
     for (i = 0; i < 4; i++)
       wait_vbl_done();
     time++;
+    if ((levelProgress & 0x0F) == 0)
+    {
+      makeObstacle();
+    }
     if ((time & 0x01) == 0)
     {
       levelProgress++;
       scroll_bkg(0, -1);
     }
-    if (time > 0xFE)
+    if ((time & 0x3F) == 0)
     {
       speedUnit += 0x01;
     }
@@ -182,7 +244,6 @@ void main()
       }
     }
     animate_sprite();
-    place_sprite(0);
-    place_sprite(1);
+    place_sprite();
   }
 }
