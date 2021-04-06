@@ -6,6 +6,10 @@ request.onload = function() {
     reader.readAsDataURL(request.response);
     reader.onload =  function(e){
         console.log('DataURL:', e.target.result);
+        var canvas = document.getElementById('gameCanvas');
+        var input = document.getElementById('file');
+        input.value = e.target.result;
+        new GameboyJS.Gameboy(canvas, { zoom: 2 });
     };
 };
 request.send();
