@@ -1,0 +1,24 @@
+@font-face {
+  font-family: "GBFont";
+  src: url("gbfont.ttf"); /* IE9 Compat Modes */
+  src: url("gbfont.ttf") format("truetype")
+}
+
+body {
+  background-color: #121212;
+}
+
+h1, h2 {
+  font-family: 'GBFont';
+  text-align: center;
+  color: #9bbc0f;
+}
+
+canvas {
+  padding: 16px;
+  border-style: double;
+  border-width: 2px;
+  border-color: #8bac0f;
+  display: block;
+  margin: auto;
+}
