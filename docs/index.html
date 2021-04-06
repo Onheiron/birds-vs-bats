@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Birds vs Bats Demo</title>
+  <script src="gameboy.js"></script>
+</head>
+
+<body>
+  <canvas id="gameCanvas" width="320" height="288"></canvas>
+  <form id="form">
+    <input id="file" type="file" value="main.gb" />
+  </form>
+  <script>
+    var canvas = document.getElementById('gameCanvas');
+    new GameboyJS.Gameboy(canvas, { zoom: 2 });
+  </script>
+</body>
+
+</html>
