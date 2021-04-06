@@ -1047,7 +1047,12 @@ var GameboyJS;
     this.initImageData();
   };
 
-  Screen.colors = [0xff, 0xaa, 0x55, 0x00];
+  Screen.colors = [
+    { r: 0x9b, g: 0xbc, b: 0x10 },
+    { r: 0x8b, g: 0xac, b: 0x10 },
+    { r: 0x30, g: 0x62, b: 0x30 },
+    { r: 0x0f, g: 0x38, b: 0x07 },
+  ];
 
   Screen.physics = {
     WIDTH: 160,
@@ -1087,10 +1092,12 @@ var GameboyJS;
           for (var px = 0; px < this.pixelSize; px++) {
             var offset = _y * this.canvas.width + (x * this.pixelSize + px);
             var v = Screen.colors[buffer[y * Screen.physics.WIDTH + x]];
-            this.imageData.data[offset * 4] = v;
-            this.imageData.data[offset * 4 + 1] = v;
-            this.imageData.data[offset * 4 + 2] = v;
-            this.imageData.data[offset * 4 + 3] = 255;
+            if (v) {
+              this.imageData.data[offset * 4] = v.r;
+              this.imageData.data[offset * 4 + 1] = v.g;
+              this.imageData.data[offset * 4 + 2] = v.b;
+              this.imageData.data[offset * 4 + 3] = 255;
+            }
           }
         }
       }
