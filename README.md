@@ -52,6 +52,9 @@ Qui alcuni punti dove trovare alcune cose all'interno del repository.
 #### Info Generali
 nel documento `doc/info` c'è un'overview molto sintetica dell'idea iniziale con i vari tipi di uccelli e di pipistrelli e di ostacoli con relative caratteristiche speciali, power-ups che si possono trovare, suddivisione in livelli ecc.
 
+#### Strutture dati
+nel file `doc/data_formats` c'è la bozza di come sono suddivise le informazioni nei vari bit corrispondenti a ciascun tipo di entità.
+
 #### Sprite e Grafiche di Gioco
 nella cartella `generation/sprites/files` ci sono tutte le sprite attualmente usate in formato `.bmp` e anche `.piko` che è il formato di PikoPixel.
 
