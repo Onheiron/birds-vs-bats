@@ -10,11 +10,12 @@ let startX,
   startY,
   endX,
   endY = 0;
-const sensibility = 50;
+const sensibility = 20;
+const reactivity = 10;
 const body = document.getElementsByTagName("body")[0];
 document.addEventListener("keydown", (e) => {
   console.log({ e });
-  keypressed.innerHTML = e.code;
+  // keypressed.innerHTML = e.code;
 });
 document.addEventListener("keyup", (e) => {
   console.log({ e });
@@ -22,10 +23,8 @@ document.addEventListener("keyup", (e) => {
 document.addEventListener("touchstart", (e) => {
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
-  console.log({ e, startX, startY });
 });
 document.addEventListener("touchend", (e) => {
-  console.log({ e });
   endX = e.changedTouches[0].clientX;
   endY = e.changedTouches[0].clientY;
   console.log({ e, startX, startY, endX, endY });
@@ -45,7 +44,7 @@ document.addEventListener("touchend", (e) => {
           keyCode: 39,
         })
       );
-    }, 100);
+    }, reactivity);
   } else if (endX < startX - sensibility) {
     document.dispatchEvent(
       new KeyboardEvent("keydown", {
@@ -62,7 +61,7 @@ document.addEventListener("touchend", (e) => {
           keyCode: 37,
         })
       );
-    }, 100);
+    }, reactivity);
   } else {
     document.dispatchEvent(
       new KeyboardEvent("keydown", { key: "g", code: "KeyG", keyCode: 71 })
@@ -71,6 +70,6 @@ document.addEventListener("touchend", (e) => {
       document.dispatchEvent(
         new KeyboardEvent("keyup", { key: "g", code: "KeyG", keyCode: 71 })
       );
-    }, 100);
+    }, reactivity);
   }
 });
