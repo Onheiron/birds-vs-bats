@@ -11,7 +11,7 @@ let startX,
   endX,
   endY = 0;
 const sensibility = 20;
-const reactivity = 10;
+const reactivity = 100;
 const body = document.getElementsByTagName("body")[0];
 document.addEventListener("keydown", (e) => {
   console.log({ e });
