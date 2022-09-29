@@ -1,5 +1,6 @@
 var canvas = document.getElementById("gameCanvas");
 var urlReader = new GameboyJS.RomAjaxReader();
+const keypressed = document.getElementById("keypressed");
 const game = new GameboyJS.Gameboy(canvas, {
   zoom: 3,
   romReaders: [urlReader],
@@ -13,6 +14,7 @@ const sensibility = 50;
 const body = document.getElementsByTagName("body")[0];
 document.addEventListener("keydown", (e) => {
   console.log({ e });
+  keypressed.innerHTML = e.code;
 });
 document.addEventListener("keyup", (e) => {
   console.log({ e });
