@@ -2,7 +2,7 @@ var canvas = document.getElementById("gameCanvas");
 var urlReader = new GameboyJS.RomAjaxReader();
 const keypressed = document.getElementById("keypressed");
 const game = new GameboyJS.Gameboy(canvas, {
-  zoom: 5,
+  zoom: 4,
   romReaders: [urlReader],
 });
 urlReader.loadFromUrl("https://onheiron.github.io/birds-vs-bats/demo.gb");
