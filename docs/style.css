@@ -6,6 +6,9 @@
 
 body {
   background-color: #121212;
+  font-family: 'GBFont';
+  text-align: center;
+  color: #9bbc0f;
 }
 
 h1, h2 {
